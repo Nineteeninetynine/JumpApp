@@ -917,7 +917,7 @@ private fun tryOpenSearchPageAndAutoPaste(context: android.content.Context, sear
 }
 
 /**
- * 修复版：直接打开小红书搜索页面
+ * 直接打开小红书搜索页面
  */
 fun openXhsSearchPageFixed(context: android.content.Context): String {
     try {
@@ -970,7 +970,7 @@ fun openXhsSearchPageFixed(context: android.content.Context): String {
 }
 
 /**
- * 修复版：复制搜索内容并打开搜索页面
+ * 复制搜索内容并打开搜索页面
  */
 fun copyToClipboardAndOpenXhsFixed(context: android.content.Context, searchText: String): String {
     try {

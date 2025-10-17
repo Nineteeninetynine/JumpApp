@@ -74,7 +74,7 @@ fun MainScreen() {
     var isSearching by remember { mutableStateOf(false) }
     var lastSearchResult by remember { mutableStateOf("") }
 
-    // 🆕 新增状态变量
+    //  状态变量
     var selectedPlatform by remember { mutableStateOf(SearchPlatform.XIAOHONGSHU) }
     var isPlatformMenuExpanded by remember { mutableStateOf(false) }
     // 用于重置搜索状态的效果
@@ -126,7 +126,7 @@ fun MainScreen() {
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(bottom = 32.dp)
         )
-        // 🆕 新增：平台选择器
+        // 平台选择器
         PlatformSelector(
             selectedPlatform = selectedPlatform,
             onPlatformSelected = { selectedPlatform = it },
@@ -321,7 +321,7 @@ fun MainScreen() {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // 🔄 修改提示文字
+        // 修改提示文字
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
@@ -337,7 +337,7 @@ fun MainScreen() {
         }
     }
 }
-// 🆕 新增组件：平台选择器
+// 平台选择器
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlatformSelector(
@@ -390,7 +390,7 @@ fun PlatformSelector(
     }
 }
 
-// 🆕 新增：多平台搜索调度函数
+// 多平台搜索调度函数
 fun searchWithAutoPaste(context: android.content.Context, platform: SearchPlatform, searchQuery: String): String {
     return when (platform) {
         SearchPlatform.XIAOHONGSHU -> searchInXhsWithAutoPaste(context, searchQuery)
@@ -398,7 +398,7 @@ fun searchWithAutoPaste(context: android.content.Context, platform: SearchPlatfo
     }
 }
 
-// 🆕 新增：多平台搜索页面打开
+// 多平台搜索页面打开
 fun openSearchPage(context: android.content.Context, platform: SearchPlatform): String {
     return when (platform) {
         SearchPlatform.XIAOHONGSHU -> openXhsSearchPageFixed(context)
@@ -406,7 +406,7 @@ fun openSearchPage(context: android.content.Context, platform: SearchPlatform): 
     }
 }
 
-// 🆕 新增：多平台复制并打开
+// 多平台复制并打开
 fun copyToClipboardAndOpen(context: android.content.Context, platform: SearchPlatform, searchText: String): String {
     return when (platform) {
         SearchPlatform.XIAOHONGSHU -> copyToClipboardAndOpenXhsFixed(context, searchText)
@@ -414,7 +414,7 @@ fun copyToClipboardAndOpen(context: android.content.Context, platform: SearchPla
     }
 }
 
-// 🆕 新增：多平台主页打开
+// 多平台主页打开
 fun openMainPage(context: android.content.Context, platform: SearchPlatform): Boolean {
     return when (platform) {
         SearchPlatform.XIAOHONGSHU -> jumpToXhsMainPage(context)
@@ -422,7 +422,7 @@ fun openMainPage(context: android.content.Context, platform: SearchPlatform): Bo
     }
 }
 
-// 🆕 新增：知乎搜索实现
+// 知乎搜索实现
 fun searchInZhihu(context: android.content.Context, searchQuery: String): String {
     try {
         Log.d("SimpleJump", "Starting Zhihu search for: $searchQuery")
@@ -476,7 +476,7 @@ fun searchInZhihu(context: android.content.Context, searchQuery: String): String
     }
 }
 
-// 🆕 新增：知乎搜索页面打开
+// 知乎搜索页面打开
 fun openZhihuSearchPage(context: android.content.Context): String {
     try {
         if (!isAppInstalled(context, "com.zhihu.android")) {
@@ -514,7 +514,7 @@ fun openZhihuSearchPage(context: android.content.Context): String {
     }
 }
 
-// 🆕 新增：知乎复制并打开
+// 知乎复制并打开
 fun copyToClipboardAndOpenZhihu(context: android.content.Context, searchText: String): String {
     try {
         if (!isAppInstalled(context, "com.zhihu.android")) {
@@ -543,7 +543,7 @@ fun copyToClipboardAndOpenZhihu(context: android.content.Context, searchText: St
     }
 }
 
-// 🆕 新增：知乎主页打开
+// 知乎主页打开
 fun jumpToZhihuMainPage(context: android.content.Context): Boolean {
     try {
         if (!isAppInstalled(context, "com.zhihu.android")) {
@@ -589,7 +589,7 @@ fun jumpToZhihuMainPage(context: android.content.Context): Boolean {
     }
 }
 
-// 🆕 新增：通用应用安装检查
+// 通用应用安装检查
 fun isAppInstalled(context: android.content.Context, packageName: String): Boolean {
     return try {
         context.packageManager.getPackageInfo(packageName, 0)
@@ -1527,8 +1527,8 @@ fun searchInXhsWithMode(
 
         // 带模式的搜索schemes
         val modeSearchSchemes = listOf(
-            "xhsdiscover://search/result?keyword=$encodedQuery&mode=$modeParam",  // 新增
-            "xhsdiscover://search/result?q=$encodedQuery&type=$modeParam",        // 新增
+            "xhsdiscover://search/result?keyword=$encodedQuery&mode=$modeParam",  
+            "xhsdiscover://search/result?q=$encodedQuery&type=$modeParam",        
             "xhsdiscover://search_result?keyword=$encodedQuery&mode=$modeParam",
             "xhsdiscover://search_result?q=$encodedQuery&type=$modeParam",
             "xhsdiscover://search?keyword=$encodedQuery&mode=$modeParam",
@@ -1594,7 +1594,7 @@ private fun tryLaunchScheme(context: android.content.Context, scheme: String): B
  */
 fun testAllSearchMethods(context: android.content.Context, testQuery: String = "测试") {
     Log.d("SimpleJump", "=== 开始测试所有搜索方案 ===")
-    // 新增：优先测试ADB验证成功的方案
+    // 优先测试ADB验证成功的方案
     val encodedQuery = URLEncoder.encode(testQuery, "UTF-8")
     val adbVerifiedScheme = "xhsdiscover://search/result?keyword=$encodedQuery"
     val adbResult = tryLaunchScheme(context, adbVerifiedScheme)

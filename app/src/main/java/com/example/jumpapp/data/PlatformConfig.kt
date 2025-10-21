@@ -191,6 +191,7 @@ object PlatformConfigs {
 
     /**
      * 获取所有配置
+     * 获取所有配置
      */
     fun getAllConfigs(): List<PlatformConfig> = listOf(
         XIAOHONGSHU, ZHIHU, BILIBILI, WEIBO, DOUYIN

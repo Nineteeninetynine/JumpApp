@@ -3,8 +3,9 @@ package com.example.simplejump.utils
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.net.wifi.WifiManager.SubsystemRestartTrackingCallback
 import android.util.Log
-import com.example.simplejump.SearchPlatform
+import com.example.simplejump.platform.SearchPlatform
 import com.example.simplejump.data.ActionType
 import com.example.simplejump.data.SearchResult
 import java.net.URLEncoder
@@ -72,7 +73,7 @@ object IntentUtils {
      */
     fun tryMultipleSchemes(
         context: Context,
-        uris: List,
+        uris: List<String>,
         actionType: ActionType = ActionType.SEARCH
     ): SearchResult {
         if (uris.isEmpty()) {
@@ -83,7 +84,7 @@ object IntentUtils {
             )
         }
 
-        val failedSchemes = mutableListOf()
+        val failedSchemes = mutableListOf<String>()
 
         for (uri in uris) {
             val result = tryOpenScheme(context, uri, actionType)
@@ -151,19 +152,13 @@ object IntentUtils {
             val encodedQuery = URLEncoder.encode(query, "UTF-8")
             val searchSchemes = generateSearchSchemes(platform, encodedQuery)
 
-            Log.d(TAG, "Smart search for
-                    query")
+            Log.d(TAG, "Smart search for query")
                     Log.d(TAG, "Generated schemes: $searchSchemes")
 
             return tryMultipleSchemes(context, searchSchemes, ActionType.SEARCH).let { result ->
                 if (result.success) {
                     result.copy(
-                        message = "✅ 成功在
-                                中
-                                搜
-                                索
-                                「
-                                query」",
+                        message = "✅ 成功在中搜索「query」",
                                 data = result.data?.plus(
                                 mapOf(
                                     "platform" to platform.displayName,
@@ -259,12 +254,7 @@ object IntentUtils {
 
             return if (openResult.success) {
                 SearchResult.success(
-                    message = "✅ 已复制「
-                    」
-                并
-                打
-                开
-                {platform.displayName}，可直接粘贴搜索",
+                    message = "✅ 已复制「」并打开{platform.displayName}，可直接粘贴搜索",
                 actionType = ActionType.COPY_AND_OPEN,
                 data = mapOf(
                     "content" to content,
@@ -302,7 +292,7 @@ object IntentUtils {
      * @param encodedQuery 编码后的查询内容
      * @return URL Schemes列表
      */
-    private fun generateSearchSchemes(platform: SearchPlatform, encodedQuery: String): List {
+    private fun generateSearchSchemes(platform: SearchPlatform, encodedQuery: String): List<String> {
         return when (platform) {
             SearchPlatform.XIAOHONGSHU -> listOf(
                 "xhsdiscover://search/result?keyword=$encodedQuery",
@@ -332,7 +322,7 @@ object IntentUtils {
      * @param platform 平台
      * @return URL Schemes列表
      */
-    private fun generateSearchPageSchemes(platform: SearchPlatform): List {
+    private fun generateSearchPageSchemes(platform: SearchPlatform): List<String> {
         return when (platform) {
             SearchPlatform.XIAOHONGSHU -> listOf(
                 "xhsdiscover://search",
@@ -362,7 +352,7 @@ object IntentUtils {
      * @param platform 平台
      * @return URL Schemes列表
      */
-    private fun generateMainPageSchemes(platform: SearchPlatform): List {
+    private fun generateMainPageSchemes(platform: SearchPlatform): List<String> {
         return when (platform) {
             SearchPlatform.XIAOHONGSHU -> listOf(
                 "xhsdiscover://main",
@@ -420,9 +410,8 @@ object IntentUtils {
             context.startActivity(intent)
 
             SearchResult.success(
-                message = "✅ 已在浏览器中打开
-                {if (query.isNotEmpty()) "搜索「$query」" else ""}",
-                        actionType = ActionType.SEARCH,
+                message = "✅ 已在浏览器中打开 ${if (query.isNotEmpty()) "搜索「$query」" else ""}",
+                actionType = ActionType.SEARCH,
                 data = mapOf(
                     "webUrl" to webUrl,
                     "platform" to platform.displayName,

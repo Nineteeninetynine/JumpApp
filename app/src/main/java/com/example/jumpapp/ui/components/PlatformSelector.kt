@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.simplejump.SearchPlatform
+import com.example.simplejump.platform.SearchPlatform
 import com.example.simplejump.ui.theme.SimpleJumpAppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -27,9 +27,11 @@ fun PlatformSelector(
         modifier = modifier
     ) {
         OutlinedTextField(
-            value = "
-            {selectedPlatform.displayName}",
-                    onValueChange = {},
+//            value = "
+//            {selectedPlatform.displayName}",
+//                    onValueChange = {},
+            value = selectedPlatform.displayName, // ✅ 直接使用属性值
+            onValueChange = {},
             readOnly = true,
             label = { Text("选择搜索平台") },
             trailingIcon = {

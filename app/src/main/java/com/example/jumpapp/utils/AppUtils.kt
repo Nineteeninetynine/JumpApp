@@ -5,7 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.util.Log
-import com.example.simplejump.SearchPlatform
+import com.example.simplejump.platform.SearchPlatform
 import com.example.simplejump.data.ActionType
 import com.example.simplejump.data.SearchResult
 
@@ -39,7 +39,7 @@ object AppUtils {
      * @param packageName 包名
      * @return 安装状态信息
      */
-    fun getAppInstallationStatus(context: Context, packageName: String): Map {
+    fun getAppInstallationStatus(context: Context, packageName: String): Map<String, Any?> {
         return try {
             val packageInfo = context.packageManager.getPackageInfo(packageName, 0)
             val appInfo = context.packageManager.getApplicationInfo(packageName, 0)
@@ -161,89 +161,89 @@ object AppUtils {
             )
         }
     }
-
-    /**
-     * 分析应用信息
-     * @param context 上下文
-     * @param platform 平台
-     * @return 操作结果
-     */
-    fun analyzeApp(context: Context, platform: SearchPlatform): SearchResult {
-        val packageName = platform.packageName
-        val status = getAppInstallationStatus(context, packageName)
-
-        val isInstalled = status["installed"] as Boolean
-
-        val analysisResult = buildString {
-            append("📱 ${platform.displayName} 应用分析/n/n")
-            append("包名：$packageName/n")
-
-            if (isInstalled) {
-                append("状态：✅ 已安装/n")
-                status["appName"]?.let { append("应用名：$it/n") }
-                status["versionName"]?.let { append("版本：$it/n") }
-                status["enabled"]?.let {
-                    append("启用状态：${if (it as Boolean) "已启用" else "已禁用"}/n")
-                }
-
-                val firstInstallTime = status["firstInstallTime"] as? Long
-                firstInstallTime?.let {
-                    val date = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.getDefault())
-                        .format(java.util.Date(it))
-                    append("首次安装：$date/n")
-                }
-            } else {
-                append("状态：❌ 未安装/n")
-                append("建议：点击安装按钮前往应用商店下载/n")
-            }
-
-            append("/n支持功能：/n")
-            append("• 智能搜索跳转/n")
-            append("• 搜索页面打开/n")
-            append("• 剪贴板内容搜索/n")
-            if (platform.hotSearches.isNotEmpty()) {
-                append("• 热门搜索：${platform.hotSearches.take(3).joinToString("、")}/n")
-            }
-        }
-
-        return SearchResult.success(
-            message = analysisResult,
-            actionType = ActionType.ANALYZE_APP,
-            data = status
-        )
-    }
-
-    /**
-     * 检查多个应用的安装状态
-     * @param context 上下文
-     * @param packageNames 包名列表
-     * @return 安装状态映射
-     */
-    fun checkMultipleAppsStatus(context: Context, packageNames: List): Map {
-        return packageNames.associateWith { packageName ->
-            isAppInstalled(context, packageName)
-        }
-    }
-
-    /**
-     * 获取设备上所有已安装的相关应用
-     * @param context 上下文
-     * @return 已安装的平台列表
-     */
-    fun getInstalledPlatforms(context: Context): List {
-        return SearchPlatform.values().filter { platform ->
-            isAppInstalled(context, platform.packageName)
-        }
-    }
-
-    /**
-     * 获取推荐安装的应用
-     * @param context 上下文
-     * @return 未安装的平台列表
-     */
-    fun getRecommendedApps(context: Context): List {
-        return SearchPlatform.values().filter { platform ->
-            !isAppInstalled(context, platform.packageName)
-        }
-    }
+//
+//    /**
+//     * 分析应用信息
+//     * @param context 上下文
+//     * @param platform 平台
+//     * @return 操作结果
+//     */
+//    fun analyzeApp(context: Context, platform: SearchPlatform): SearchResult {
+//        val packageName = platform.packageName
+//        val status = getAppInstallationStatus(context, packageName)
+//
+//        val isInstalled = status["installed"] as Boolean
+//
+//        val analysisResult = buildString {
+//            append("📱 ${platform.displayName} 应用分析/n/n")
+//            append("包名：$packageName/n")
+//
+//            if (isInstalled) {
+//                append("状态：✅ 已安装/n")
+//                status["appName"]?.let { append("应用名：$it/n") }
+//                status["versionName"]?.let { append("版本：$it/n") }
+//                status["enabled"]?.let {
+//                    append("启用状态：${if (it as Boolean) "已启用" else "已禁用"}/n")
+//                }
+//
+//                val firstInstallTime = status["firstInstallTime"] as? Long
+//                firstInstallTime?.let {
+//                    val date = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.getDefault())
+//                        .format(java.util.Date(it))
+//                    append("首次安装：$date/n")
+//                }
+//            } else {
+//                append("状态：❌ 未安装/n")
+//                append("建议：点击安装按钮前往应用商店下载/n")
+//            }
+//
+//            append("/n支持功能：/n")
+//            append("• 智能搜索跳转/n")
+//            append("• 搜索页面打开/n")
+//            append("• 剪贴板内容搜索/n")
+//            if (platform.hotSearches.isNotEmpty()) {
+//                append("• 热门搜索：${platform.hotSearches.take(3).joinToString("、")}/n")
+//            }
+//        }
+//
+//        return SearchResult.success(
+//            message = analysisResult,
+//            actionType = ActionType.ANALYZE_APP,
+//            data = status
+//        )
+//    }
+//
+//    /**
+//     * 检查多个应用的安装状态
+//     * @param context 上下文
+//     * @param packageNames 包名列表
+//     * @return 安装状态映射
+//     */
+//    fun checkMultipleAppsStatus(context: Context, packageNames: List): Map {
+//        return packageNames.associateWith { packageName ->
+//            isAppInstalled(context, packageName)
+//        }
+//    }
+//
+//    /**
+//     * 获取设备上所有已安装的相关应用
+//     * @param context 上下文
+//     * @return 已安装的平台列表
+//     */
+//    fun getInstalledPlatforms(context: Context): List {
+//        return SearchPlatform.values().filter { platform ->
+//            isAppInstalled(context, platform.packageName)
+//        }
+//    }
+//
+//    /**
+//     * 获取推荐安装的应用
+//     * @param context 上下文
+//     * @return 未安装的平台列表
+//     */
+//    fun getRecommendedApps(context: Context): List {
+//        return SearchPlatform.values().filter { platform ->
+//            !isAppInstalled(context, platform.packageName)
+//        }
+//    }
 }

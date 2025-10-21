@@ -224,7 +224,8 @@ class DouyinSearchProvider : SearchProvider {
             "specialFeatures" to listOf("短视频", "直播", "音乐", "挑战")
         )
 
-        return baseInfo + AppUtils.getAppInstallationStatus(context, platform.packageName)
+        val installationStatus = AppUtils.getAppInstallationStatus(context, platform.packageName)
+        return baseInfo + (installationStatus as Map<String, Any>)
     }
 
     override suspend fun jumpToStore(context: Context): SearchResult {
@@ -251,8 +252,14 @@ class DouyinSearchProvider : SearchProvider {
 
             if (result.success) {
                 result.copy(
-                    message = "✅ 已在浏览器中打开抖音query」" else ""}",
-            data = result.data?.plus(
+                    message = buildString {
+                        append("✅ 已在浏览器中打开抖音")
+                        if (query.isNotEmpty()) {
+                            append("搜索「$query」")
+                        }
+                    },
+                    actionType = ActionType.WEB_SEARCH, // 添加必需参数
+                    data = result.data?.plus(
                 mapOf(
                     "webUrl" to webUrl,
                     "query" to query,
@@ -263,14 +270,14 @@ class DouyinSearchProvider : SearchProvider {
         } else {
             result
         }
-    } catch (e: Exception) {
-        Log.e(TAG, "Error opening web version", e)
-        SearchResult.failure(
-            message = "❌ 打开抖音网页版失败：${e.message}",
-            actionType = ActionType.SEARCH,
-            errorCode = "WEB_VERSION_ERROR",
-            data = mapOf("exception" to e.message.orEmpty())
-        )
+    }catch (e: Exception) {
+            Log.e(TAG, "Error opening web version", e)
+            SearchResult.failure(
+                message = "❌ 打开抖音网页版失败：${e.message}",
+                actionType = ActionType.SEARCH,
+                errorCode = "WEB_VERSION_ERROR",
+                data = mapOf("exception" to e.message.orEmpty())
+            )
+        }
     }
-}
 }

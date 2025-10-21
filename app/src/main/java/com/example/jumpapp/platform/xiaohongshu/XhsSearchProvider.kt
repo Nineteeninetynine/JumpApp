@@ -218,7 +218,7 @@ class XhsSearchProvider : SearchProvider {
         return AppUtils.isAppInstalled(context, platform.packageName)
     }
 
-    override fun getAppInfo(context: Context): Map {
+    override fun getAppInfo(context: Context): Map<String, Any> {
         val baseInfo = mapOf(
             "platform" to platform.displayName,
             "packageName" to platform.packageName,
@@ -227,7 +227,8 @@ class XhsSearchProvider : SearchProvider {
             "hotSearches" to platform.hotSearches
         )
 
-        return baseInfo + AppUtils.getAppInstallationStatus(context, platform.packageName)
+        val installationStatus = AppUtils.getAppInstallationStatus(context, platform.packageName)
+        return baseInfo + (installationStatus as Map<String, Any>)
     }
 
     override suspend fun jumpToStore(context: Context): SearchResult {
@@ -254,14 +255,20 @@ class XhsSearchProvider : SearchProvider {
 
             if (result.success) {
                 result.copy(
-                    message = "✅ 已在浏览器中打开小红书query」" else ""}",
-            data = result.data?.plus(
-                mapOf(
-                    "webUrl" to webUrl,
-                    "query" to query,
-                    "method" to "web_version"
-                )
-            )
+                    message = buildString {
+                        append("✅ 已在浏览器中打开小红书")
+                        if (query.isNotEmpty()) {
+                            append("搜索「$query」")
+                        }
+                    },
+
+                    data = result.data?.plus(
+                        mapOf(
+                            "webUrl" to webUrl,
+                            "query" to query,
+                            "method" to "web_version"
+                        )
+                    )
             )
         } else {
             result

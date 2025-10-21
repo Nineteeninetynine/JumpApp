@@ -65,7 +65,7 @@ object XhsSchemes {
      * @param encoded 是否已编码
      * @return 搜索URL列表
      */
-    fun buildSearchUrls(keyword: String, encoded: Boolean = false): List {
+    fun buildSearchUrls(keyword: String, encoded: Boolean = false): List<String> {
         val query = if (encoded) keyword else java.net.URLEncoder.encode(keyword, "UTF-8")
         return listOf(
             Search.SEARCH_RESULT + query,
@@ -77,7 +77,7 @@ object XhsSchemes {
      * 构建搜索页面URL列表
      * @return 搜索页面URL列表
      */
-    fun buildSearchPageUrls(): List {
+    fun buildSearchPageUrls(): List<String> {
         return listOf(Search.SEARCH_PAGE) + Search.FALLBACK_SEARCH_SCHEMES
     }
 
@@ -85,7 +85,7 @@ object XhsSchemes {
      * 构建主页URL列表
      * @return 主页URL列表
      */
-    fun buildMainPageUrls(): List {
+    fun buildMainPageUrls(): List<String> {
         return listOf(
             Main.HOME,
             Main.DISCOVER,

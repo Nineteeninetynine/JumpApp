@@ -62,7 +62,7 @@ object ZhihuSchemes {
     /**
      * 构建搜索URL
      */
-    fun buildSearchUrls(keyword: String, encoded: Boolean = false): List {
+    fun buildSearchUrls(keyword: String, encoded: Boolean = false): List<String> {
         val query = if (encoded) keyword else java.net.URLEncoder.encode(keyword, "UTF-8")
         return listOf(
             Search.SEARCH_RESULT + query,
@@ -73,14 +73,14 @@ object ZhihuSchemes {
     /**
      * 构建搜索页面URL列表
      */
-    fun buildSearchPageUrls(): List {
+    fun buildSearchPageUrls(): List<String> {
         return listOf(Search.SEARCH_PAGE) + Search.FALLBACK_SEARCH_SCHEMES
     }
 
     /**
      * 构建主页URL列表
      */
-    fun buildMainPageUrls(): List {
+    fun buildMainPageUrls(): List<String> {
         return listOf(
             Main.HOME,
             Main.DISCOVER,

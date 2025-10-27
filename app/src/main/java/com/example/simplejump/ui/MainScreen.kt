@@ -15,19 +15,87 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.simplejump.platform.SearchPlatform
+import com.example.simplejump.platform.PlatformManager
 import com.example.simplejump.ui.components.*
 import com.example.simplejump.ui.theme.SimpleJumpAppTheme
+import kotlinx.coroutines.runBlocking
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(modifier: Modifier = Modifier) {
     val context = LocalContext.current
+    val platformManager = remember { PlatformManager.getInstance() }
 
     // 状态管理
     var searchText by remember { mutableStateOf("") }
     var selectedPlatform by remember { mutableStateOf(SearchPlatform.XIAOHONGSHU) }
     var lastSearchResult by remember { mutableStateOf("") }
     var isSearching by remember { mutableStateOf(false) }
+
+    // ✅ 执行搜索的函数
+    fun performSearch() {
+        if (searchText.isBlank()) return
+
+        isSearching = true
+        try {
+            val result = runBlocking {
+                platformManager.search(context, selectedPlatform, searchText)
+            }
+            lastSearchResult = result.message
+        } catch (e: Exception) {
+            lastSearchResult = "❌ 搜索失败: ${e.message}"
+        } finally {
+            isSearching = false
+        }
+    }
+
+    // ✅ 打开搜索页面的函数
+    fun openSearchPage() {
+        isSearching = true
+        try {
+            val result = runBlocking {
+                platformManager.openSearchPage(context, selectedPlatform)
+            }
+            lastSearchResult = result.message
+        } catch (e: Exception) {
+            lastSearchResult = "❌ 操作失败: ${e.message}"
+        } finally {
+            isSearching = false
+        }
+    }
+
+    // ✅ 复制并打开的函数 - 修正方法名
+    fun copyAndOpen() {
+        if (searchText.isBlank()) return
+
+        isSearching = true
+        try {
+            val result = runBlocking {
+                // 注意：这里使用 copyAndOpenSearch 而不是 copyToClipboardAndOpen
+                platformManager.copyAndOpenSearch(context, selectedPlatform, searchText)
+            }
+            lastSearchResult = result.message
+        } catch (e: Exception) {
+            lastSearchResult = "❌ 操作失败: ${e.message}"
+        } finally {
+            isSearching = false
+        }
+    }
+
+    // ✅ 打开主页的函数
+    fun openMainPage() {
+        isSearching = true
+        try {
+            val result = runBlocking {
+                platformManager.openMainPage(context, selectedPlatform)
+            }
+            lastSearchResult = result.message
+        } catch (e: Exception) {
+            lastSearchResult = "❌ 操作失败: ${e.message}"
+        } finally {
+            isSearching = false
+        }
+    }
 
     Log.d("SimpleJump", "MainScreen composing")
 
@@ -83,66 +151,40 @@ fun MainScreen(modifier: Modifier = Modifier) {
             )
         }
 
-        // 搜索输入框
+        // 搜索输入框 - ✅ 实现搜索提交
         SearchInputField(
             searchText = searchText,
             onSearchTextChange = { searchText = it },
-            onSearchSubmit = {
-                if (searchText.isNotBlank()) {
-                    isSearching = true
-                    // TODO: 调用搜索功能
-                    lastSearchResult = "搜索功能开发中..."
-                    isSearching = false
-                }
-            },
+            onSearchSubmit = { performSearch() }, // ✅ 调用实际搜索
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 24.dp)
         )
 
-        // 功能按钮组
+        // 功能按钮组 - ✅ 实现所有功能
         ActionButtons(
             searchText = searchText,
             selectedPlatform = selectedPlatform,
             isSearching = isSearching,
-            onSearchClick = {
-                if (searchText.isNotBlank()) {
-                    isSearching = true
-                    // TODO: 调用智能搜索
-                    lastSearchResult = "智能搜索功能开发中..."
-                    isSearching = false
-                }
-            },
-            onOpenSearchPageClick = {
-                // TODO: 调用打开搜索页面
-                lastSearchResult = "打开搜索页面功能开发中..."
-            },
-            onCopyAndOpenClick = {
-                if (searchText.isNotBlank()) {
-                    // TODO: 调用复制并打开
-                    lastSearchResult = "复制并打开功能开发中..."
-                }
-            },
+            onSearchClick = { performSearch() }, // ✅ 智能搜索
+            onOpenSearchPageClick = { openSearchPage() }, // ✅ 打开搜索页面
+            onCopyAndOpenClick = { copyAndOpen() }, // ✅ 复制并打开
             onClearClick = {
                 searchText = ""
                 lastSearchResult = ""
             },
-            onOpenMainPageClick = {
-                // TODO: 调用打开主页
-                lastSearchResult = "打开主页功能开发中..."
-            },
+            onOpenMainPageClick = { openMainPage() }, // ✅ 打开主页
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // 热门搜索标签
+        // 热门搜索标签 - ✅ 实现自动搜索
         HotSearchTags(
             platform = selectedPlatform,
             onTagClick = { tag ->
                 searchText = tag
-                // TODO: 自动执行搜索
-                lastSearchResult = "自动搜索「$tag」功能开发中..."
+                performSearch() // ✅ 自动执行搜索
             },
             modifier = Modifier.fillMaxWidth()
         )

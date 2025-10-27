@@ -31,7 +31,9 @@ class PlatformManager private constructor() {
     private val providers: Map<SearchPlatform, SearchProvider> = mapOf(
         SearchPlatform.XIAOHONGSHU to XhsSearchProvider(),
         SearchPlatform.ZHIHU to ZhihuSearchProvider(),
-        SearchPlatform.DOUYIN to DouyinSearchProvider()
+        SearchPlatform.DOUYIN to DouyinSearchProvider(),
+        SearchPlatform.WEIBO to WeiboSearchProvider(),
+        SearchPlatform.BILIBILI to BilibiliSearchProvider(),
         // 其他平台可以在这里添加
     )
 
@@ -217,3 +219,4 @@ class PlatformManager private constructor() {
         )
     }
 }
+
